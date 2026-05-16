@@ -72,7 +72,7 @@ function chooseDog(predictions) {
 function Loader() {
   return <Html center><div className="loader">Loading model...</div></Html>;
 }
-
+///
 function SafeModel({ dog }) {
   const group = useRef();
   const { scene } = useGLTF(dog.file);
