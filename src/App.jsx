@@ -7,23 +7,242 @@ import "@tensorflow/tfjs";
 import { ScanSearch, Box, RotateCcw, Upload, PawPrint, Sparkles, Info } from "lucide-react";
 
 const DOG_MODELS = [
-  { name: "Beagle", file: "/models/beagle.glb", size: "Small-Medium", lifespan: "12-15 years", origin: "England", temperament: "Curious, friendly, gentle", keywords: ["beagle", "walker hound", "foxhound", "english foxhound", "basset"] },
-  { name: "Siberian Husky", file: "/models/advent_calendar_day_15__husky_dog.glb", size: "Medium-Large", lifespan: "12-15 years", origin: "Siberia", temperament: "Energetic, loyal, playful", keywords: ["husky", "siberian husky", "malamute", "eskimo dog"] },
-  { name: "Blue Eyed Boxer", file: "/models/blue_eyed_boxer_dog.glb", size: "Medium-Large", lifespan: "10-12 years", origin: "Germany", temperament: "Playful, brave, loyal", keywords: ["boxer"] },
-  { name: "Brown Labrador Retriever", file: "/models/brown_labrador_retriever_v1.glb", size: "Large", lifespan: "10-12 years", origin: "Canada", temperament: "Friendly, smart, active", keywords: ["labrador", "retriever", "chesapeake", "flat-coated", "curly-coated"] },
-  { name: "Chihuahua", file: "/models/chihuahua_chiwawa_dog_nomad_sculpt_basemesh.glb", size: "Small", lifespan: "14-16 years", origin: "Mexico", temperament: "Alert, lively, loyal", keywords: ["chihuahua"] },
-  { name: "Chow Chow", file: "/models/chowchow_lp.glb", size: "Medium", lifespan: "8-12 years", origin: "China", temperament: "Calm, loyal, independent", keywords: ["chow", "chow chow"] },
-  { name: "Dachshund", file: "/models/dachshund_dog_rig.glb", size: "Small", lifespan: "12-16 years", origin: "Germany", temperament: "Clever, brave, playful", keywords: ["dachshund", "sausage"] },
-  { name: "Dachshund Sculpt", file: "/models/dachshund_sculpt.glb", size: "Small", lifespan: "12-16 years", origin: "Germany", temperament: "Curious, brave, lively", keywords: ["dachshund sculpt"] },
-  { name: "Doberman", file: "/models/doberman.glb", size: "Large", lifespan: "10-13 years", origin: "Germany", temperament: "Alert, loyal, fearless", keywords: ["doberman", "dobermann", "pinscher", "miniature pinscher", "appenzeller", "entlebucher"] },
-  { name: "Bulldog", file: "/models/bulldog_statue.glb", size: "Medium", lifespan: "8-10 years", origin: "England", temperament: "Calm, courageous, gentle", keywords: ["bulldog", "english bulldog", "old english bulldog", "british bulldog", "pug"] },
-  { name: "French Bulldog", file: "/models/french_bulldog_sitting.glb", size: "Small-Medium", lifespan: "10-12 years", origin: "France", temperament: "Adaptable, playful, smart", keywords: ["french bulldog", "frenchie", "boston bull"] },
-  { name: "German Shepherd", file: "/models/german_shepherd_rig.glb", size: "Large", lifespan: "9-13 years", origin: "Germany", temperament: "Confident, loyal, alert", keywords: ["german shepherd", "shepherd", "alsatian", "kelpie"] },
-  { name: "Golden Retriever", file: "/models/golden_retriever_sitting.glb", size: "Large", lifespan: "10-12 years", origin: "Scotland", temperament: "Friendly, intelligent, kind", keywords: ["golden retriever"] },
-  { name: "Rottweiler", file: "/models/low-poly_rottweiler_dog.glb", size: "Large", lifespan: "8-10 years", origin: "Germany", temperament: "Strong, confident, loyal", keywords: ["rottweiler"] },
-  { name: "Pitbull", file: "/models/pitbull.glb", size: "Medium", lifespan: "12-14 years", origin: "United States", temperament: "Strong, loyal, affectionate", keywords: ["pitbull", "pit bull", "staffordshire", "american staffordshire", "bull terrier"] },
-  { name: "Shih Tzu", file: "/models/shih_tzu.glb", size: "Small", lifespan: "10-16 years", origin: "Tibet/China", temperament: "Affectionate, friendly, outgoing", keywords: ["shih-tzu", "shih tzu", "shihtzu", "lhasa", "pekinese", "tibetan terrier", "chrysanthemum dog"] },
+  {
+    name: "Beagle",
+    file: "/models/beagle.glb",
+    size: "Small-Medium",
+    lifespan: "12-15 years",
+    origin: "England",
+    temperament: "Curious, friendly, gentle",
+    keywords: ["beagle", "walker hound", "foxhound", "english foxhound", "basset"],
+  },
+
+  {
+    name: "Siberian Husky",
+    file: "/models/advent_calendar_day_15__husky_dog.glb",
+    size: "Medium-Large",
+    lifespan: "12-15 years",
+    origin: "Siberia",
+    temperament: "Energetic, loyal, playful",
+    keywords: ["husky", "siberian husky", "malamute", "eskimo dog"],
+  },
+
+  {
+    name: "Blue Eyed Boxer",
+    file: "/models/blue_eyed_boxer_dog.glb",
+    size: "Medium-Large",
+    lifespan: "10-12 years",
+    origin: "Germany",
+    temperament: "Playful, brave, loyal",
+    keywords: ["boxer"],
+  },
+
+  {
+    name: "Brown Labrador Retriever",
+    file: "/models/brown_labrador_retriever_v1.glb",
+    size: "Large",
+    lifespan: "10-12 years",
+    origin: "Canada",
+    temperament: "Friendly, smart, active",
+    keywords: ["labrador", "retriever", "chesapeake", "flat-coated"],
+  },
+
+  {
+    name: "Chihuahua",
+    file: "/models/chihuahua_chiwawa_dog_nomad_sculpt_basemesh.glb",
+    size: "Small",
+    lifespan: "14-16 years",
+    origin: "Mexico",
+    temperament: "Alert, lively, loyal",
+    keywords: ["chihuahua"],
+  },
+
+  {
+    name: "Chow Chow",
+    file: "/models/chowchow_lp.glb",
+    size: "Medium",
+    lifespan: "8-12 years",
+    origin: "China",
+    temperament: "Calm, loyal, independent",
+    keywords: ["chow", "chow chow"],
+  },
+
+  {
+    name: "Dachshund",
+    file: "/models/dachshund_dog_rig.glb",
+    size: "Small",
+    lifespan: "12-16 years",
+    origin: "Germany",
+    temperament: "Clever, brave, playful",
+    keywords: ["dachshund", "sausage dog"],
+  },
+
+  {
+    name: "Dachshund Sculpt",
+    file: "/models/dachshund_sculpt.glb",
+    size: "Small",
+    lifespan: "12-16 years",
+    origin: "Germany",
+    temperament: "Curious, brave, lively",
+    keywords: ["dachshund sculpt"],
+  },
+
+  {
+    name: "Doberman",
+    file: "/models/doberman.glb",
+    size: "Large",
+    lifespan: "10-13 years",
+    origin: "Germany",
+    temperament: "Alert, loyal, fearless",
+    keywords: [
+      "doberman",
+      "dobermann",
+      "pinscher",
+      "miniature pinscher",
+      "appenzeller",
+      "entlebucher",
+    ],
+  },
+
+  {
+    name: "Bulldog",
+    file: "/models/bulldog_statue.glb",
+    size: "Medium",
+    lifespan: "8-10 years",
+    origin: "England",
+    temperament: "Calm, courageous, gentle",
+    keywords: ["bulldog", "english bulldog", "pug"],
+  },
+
+  {
+    name: "French Bulldog",
+    file: "/models/french_bulldog_sitting.glb",
+    size: "Small-Medium",
+    lifespan: "10-12 years",
+    origin: "France",
+    temperament: "Adaptable, playful, smart",
+    keywords: ["french bulldog", "frenchie"],
+  },
+
+  {
+    name: "German Shepherd",
+    file: "/models/german_shepherd_rig.glb",
+    size: "Large",
+    lifespan: "9-13 years",
+    origin: "Germany",
+    temperament: "Confident, loyal, alert",
+    keywords: ["german shepherd", "shepherd", "alsatian", "kelpie"],
+  },
+
+  {
+    name: "Belgian German Shepherd",
+    file: "/models/belgiangerman_shepherd_-_sat_pose_meshy.glb",
+    size: "Large",
+    lifespan: "10-14 years",
+    origin: "Belgium/Germany",
+    temperament: "Protective, intelligent, loyal",
+    keywords: [
+      "belgian shepherd",
+      "belgian malinois",
+      "malinois",
+      "shepherd",
+    ],
+  },
+
+  {
+    name: "Golden Retriever",
+    file: "/models/golden_retriever_sitting.glb",
+    size: "Large",
+    lifespan: "10-12 years",
+    origin: "Scotland",
+    temperament: "Friendly, intelligent, kind",
+    keywords: ["golden retriever"],
+  },
+
+  {
+    name: "Rottweiler",
+    file: "/models/low-poly_rottweiler_dog.glb",
+    size: "Large",
+    lifespan: "8-10 years",
+    origin: "Germany",
+    temperament: "Strong, confident, loyal",
+    keywords: ["rottweiler"],
+  },
+
+  {
+    name: "Pitbull",
+    file: "/models/pitbull.glb",
+    size: "Medium",
+    lifespan: "12-14 years",
+    origin: "United States",
+    temperament: "Strong, loyal, affectionate",
+    keywords: [
+      "pitbull",
+      "pit bull",
+      "staffordshire",
+      "american staffordshire",
+      "bull terrier",
+    ],
+  },
+
+  {
+    name: "Shih Tzu",
+    file: "/models/shih_tzu.glb",
+    size: "Small",
+    lifespan: "10-16 years",
+    origin: "Tibet/China",
+    temperament: "Affectionate, friendly, outgoing",
+    keywords: [
+      "shih-tzu",
+      "shih tzu",
+      "shihtzu",
+      "lhasa",
+      "pekinese",
+      "tibetan terrier",
+    ],
+  },
+
+  {
+    name: "Great Dane",
+    file: "/models/great_dane_low_poly.glb",
+    size: "Giant",
+    lifespan: "7-10 years",
+    origin: "Germany",
+    temperament: "Gentle, friendly, patient",
+    keywords: ["great dane", "dane"],
+  },
+
+  {
+    name: "Spanish Mastiff",
+    file: "/models/spanish_mastiff.glb",
+    size: "Giant",
+    lifespan: "10-12 years",
+    origin: "Spain",
+    temperament: "Calm, protective, loyal",
+    keywords: ["spanish mastiff", "mastiff"],
+  },
+
+  {
+    name: "Saint Bernard",
+    file: "/models/saint_bernard.glb",
+    size: "Giant",
+    lifespan: "8-10 years",
+    origin: "Switzerland",
+    temperament: "Gentle, calm, friendly",
+    keywords: ["saint bernard", "st bernard"],
+  },
+
+  {
+    name: "Generic Dog",
+    file: "/models/dog.glb",
+    size: "Medium",
+    lifespan: "10-13 years",
+    origin: "Unknown",
+    temperament: "Friendly, active, loyal",
+    keywords: ["dog", "canine", "mixed breed"],
+  },
 ];
+
 
 DOG_MODELS.forEach((dog) => useGLTF.preload(dog.file));
 
