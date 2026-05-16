@@ -5,7 +5,6 @@ import * as THREE from "three";
 import * as mobilenet from "@tensorflow-models/mobilenet";
 import "@tensorflow/tfjs";
 import { ScanSearch, Box, RotateCcw, Upload, PawPrint, Sparkles, Info } from "lucide-react";
-import { analyzeDogImage } from "./utils/openrouter";
 
 const DOG_MODELS = [
   { name: "Beagle", file: "/models/beagle.glb", size: "Small-Medium", lifespan: "12-15 years", origin: "England", temperament: "Curious, friendly, gentle", keywords: ["beagle", "walker hound", "foxhound", "english foxhound", "basset"] },
@@ -26,20 +25,13 @@ const DOG_MODELS = [
   { name: "Shih Tzu", file: "/models/shih_tzu.glb", size: "Small", lifespan: "10-16 years", origin: "Tibet/China", temperament: "Affectionate, friendly, outgoing", keywords: ["shih-tzu", "shih tzu", "shihtzu", "lhasa", "pekinese", "tibetan terrier", "chrysanthemum dog"] },
 ];
 
+DOG_MODELS.forEach((dog) => useGLTF.preload(dog.file));
+
 const heroImages = [
   "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=900&q=80",
   "https://images.unsplash.com/photo-1558788353-f76d92427f16?auto=format&fit=crop&w=900&q=80",
   "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=900&q=80",
 ];
-
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
 
 function getScore(predictions, dog) {
   let total = 0;
@@ -84,22 +76,10 @@ function chooseDog(predictions) {
   };
 }
 
-function chooseDogFromText(text) {
-  const clean = text.toLowerCase();
-
-  return (
-    DOG_MODELS.find((dog) => clean.includes(dog.name.toLowerCase())) ||
-    DOG_MODELS.find((dog) =>
-      dog.keywords.some((keyword) => clean.includes(keyword.toLowerCase()))
-    ) ||
-    null
-  );
-}
-
 function Loader() {
   return (
     <Html center>
-      <div className="loader">Loading model...</div>
+      <div className="loader">Loading 3D model...</div>
     </Html>
   );
 }
@@ -134,6 +114,39 @@ function SafeModel({ dog }) {
     <group ref={group} position={[0, -1, 0]} rotation={[0, Math.PI * 0.12, 0]}>
       <primitive object={normalized} />
     </group>
+  );
+}
+
+async function verifyWithOpenRouter(file) {
+  try {
+    const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+    if (!apiKey) return null;
+
+    const reader = new FileReader();
+
+    const base64Image = await new Promise((resolve, reject) => {
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+
+    const { analyzeDogImage } = await import("./utils/openrouter");
+    return await analyzeDogImage(base64Image);
+  } catch (error) {
+    console.warn("OpenRouter fallback skipped:", error);
+    return null;
+  }
+}
+
+function chooseDogFromText(text) {
+  const clean = String(text || "").toLowerCase();
+
+  return (
+    DOG_MODELS.find((dog) => clean.includes(dog.name.toLowerCase())) ||
+    DOG_MODELS.find((dog) =>
+      dog.keywords.some((keyword) => clean.includes(keyword.toLowerCase()))
+    ) ||
+    null
   );
 }
 
@@ -202,6 +215,7 @@ export default function App() {
   const [confidence, setConfidence] = useState(98);
   const [matchedLabel, setMatchedLabel] = useState("manual preview");
   const [loadingAI, setLoadingAI] = useState(true);
+  const [scanStatus, setScanStatus] = useState("Loading AI model...");
 
   useEffect(() => {
     let active = true;
@@ -210,6 +224,7 @@ export default function App() {
       if (active) {
         setModel(loaded);
         setLoadingAI(false);
+        setScanStatus("AI ready");
       }
     });
 
@@ -223,6 +238,7 @@ export default function App() {
     if (!file || !model) return;
 
     setLoadingAI(true);
+    setScanStatus("Scanning image...");
 
     const url = URL.createObjectURL(file);
     setImage(url);
@@ -243,8 +259,8 @@ export default function App() {
         setMatchedLabel(match.label);
 
         if (match.confidence < 70) {
-          const base64Image = await fileToBase64(file);
-          const aiResult = await analyzeDogImage(base64Image);
+          setScanStatus("Low confidence. Verifying...");
+          const aiResult = await verifyWithOpenRouter(file);
 
           if (aiResult?.breed) {
             const aiDog = chooseDogFromText(aiResult.breed);
@@ -256,8 +272,11 @@ export default function App() {
             }
           }
         }
+
+        setScanStatus("Scan complete");
       } catch (error) {
         console.error("Scan failed:", error);
+        setScanStatus("Scan failed. Try another image.");
       } finally {
         setLoadingAI(false);
       }
@@ -345,7 +364,7 @@ export default function App() {
             </div>
           )}
 
-          {loadingAI && <small>Loading AI model...</small>}
+          <small>{scanStatus}</small>
         </div>
 
         <div className="panel compact results-panel">
@@ -380,6 +399,7 @@ export default function App() {
               setConfidence(98);
               setSelectedDog(DOG_MODELS[0]);
               setMatchedLabel("manual preview");
+              setScanStatus("AI ready");
             }}
           >
             <RotateCcw size={15} />
